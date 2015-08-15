@@ -1,5 +1,10 @@
 ## Kanji reading practice sheets
 
+### Requirements
+
+Debian, Ubuntu: apt-get install libdbd-sqlite3-perl
+Arch: pacman -S perl-dbd-sqlite
+
 ### How to
 
 First generate dictionary using my generate_kanji_dictionary, then enter characters you want to practice into @mykanji array, fill in what characters you already know (not needed) into @iknowkanji array and execute script:
