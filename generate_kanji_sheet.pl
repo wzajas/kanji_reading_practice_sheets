@@ -217,8 +217,8 @@ print " </body>
 if ( $print_suggested_kanji ) {
  $kanji_query = $dbh->prepare("select k.character, count(*) from kanji k
   join kanjiwords kw on kw.kanji_id = k.id
-  where kw.word_id in (".join ',', ( keys %words_seen ).") 
-  and kw.kanji_id not in (".join ',', map { $kanji{$_}{ID} } @usekanji.")
+  where kw.word_id in (".join(',', ( keys %words_seen )).")
+  and kw.kanji_id not in (".join(',', map { $kanji{$_}{ID} } @usekanji).")
   group by k.character
   order by count(*) desc
   " );
