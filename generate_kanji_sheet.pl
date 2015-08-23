@@ -18,40 +18,9 @@ my $words_per_character=12;
 my $print_radicals=1;
 my $print_suggested_kanji=0;
 
-my @mykanji = (
-qw /
-問
-題
-答
-気
-利
-貸
-借
-伝
-利
-口
-当
-/
- );
+my @mykanji;
 
-my @iknowkanji = (
-qw/
-同
-意
-注
-別
-計
-特
-変
-温
-度
-平
-出
-事
-世
-回
-/
-);
+my @iknowkanji;
 
 my %kanji;
 my $kanji_query = $dbh->prepare("select id, character, reading_on, reading_kun, meaning from kanji");
@@ -64,6 +33,34 @@ while (my ($kanji_id , $kanji_character , $kanji_reading_on , $kanji_reading_kun
   'Kun' => $kanji_reading_kun,
   'Meaning' => $kanji_meaning,
  };
+}
+
+open my $my_kanji_file, '<:encoding(UTF-8)', 'my_kanji.txt' or die "my_kanji.txt not found\n";
+
+while (<$my_kanji_file>){
+ chomp;
+ next if /^#/;
+ next if /^$/;
+ if ( $kanji{$_} ) {
+  push(@mykanji, $_);
+ }
+}
+
+close $my_kanji_file;
+
+if ( -f "i_know_kanji.txt" ) {
+ open my $i_know_kanji_file, '<:encoding(UTF-8)', 'i_know_kanji.txt' or die "Cannot open i_know_kanji.txt\n";
+
+ while (<$i_know_kanji_file>){
+  chomp;
+  next if /^#/;
+  next if /^$/;
+  if ( $kanji{$_} ) {
+   push(@iknowkanji, $_);
+  }
+ }
+
+ close $i_know_kanji_file;
 }
 
 #Merge and delete duplicates

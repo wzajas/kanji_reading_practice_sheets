@@ -8,7 +8,7 @@ Arch: pacman -S perl-dbd-sqlite
 
 ### How to
 
-First generate dictionary using my generate_kanji_dictionary, then enter characters you want to practice into @mykanji array, fill in what characters you already know (not needed) into @iknowkanji array and execute script:
+First generate dictionary using my generate_kanji_dictionary, then enter characters you want to practice into my_kanji.txt (one per line), fill in what characters you already know (not needed) into i_know_kanji.txt and execute script:
 
 ```
 perl generate_kanji_sheet.pl > practice.html

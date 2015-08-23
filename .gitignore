@@ -1,2 +1,5 @@
-*.html
+/*.html
 *.db
+.*.swp
+/i_know_kanji.txt
+/my_kanji.txt
