@@ -4,6 +4,7 @@ use utf8;
 use strict;
 use warnings;
 use DBI;
+use Getopt::Std;
 
 use open ':std', ':encoding(UTF-8)';
 
@@ -14,9 +15,37 @@ my $dbh = DBI->connect(
     { RaiseError => 1, sqlite_unicode => 1, },         
 ) or die $DBI::errstr;
 
+my %options;
+getopts("hw:rs", \%options);
+
 my $words_per_character=12;
-my $print_radicals=1;
+my $print_radicals=0;
 my $print_suggested_kanji=0;
+
+if($options{h}) {
+ print "Usage:
+ -w <number> :how many words should be printed with character
+ -r :print radicals
+ -s :print suggested kanji\n";
+ exit();
+}
+
+if($options{w}) {
+ if($options{w} =~ /^\d+$/) {
+  $words_per_character=$options{w};
+ } else {
+  print STDERR "-w switch should be used with integer\n";
+  exit(1);
+ }
+}
+
+if($options{r}) {
+ $print_radicals=1;
+}
+
+if($options{s}) {
+ $print_suggested_kanji=1;
+}
 
 my @mykanji;
 

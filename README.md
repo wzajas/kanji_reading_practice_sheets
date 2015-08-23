@@ -14,6 +14,16 @@ First generate dictionary using my generate_kanji_dictionary, then enter charact
 perl generate_kanji_sheet.pl > practice.html
 ```
 
+### Usage
+
+By default script prints 12 words with each kanji, radicas and suggested characters are hidden.
+
+```
+-w <number> :how many words should be printed with character
+-r :print radicals
+-s :print suggested kanji\n";
+```
+
 ### How it works
 
 First it collets all kanji from database into hash. Next, usekanji table is filled with characters from @mykanji and @iknowkanji. usekanji only purpose is to count how many of those characters appear in each word. After that each character from @mykanji is printed inside template with example words and radicals. Example words are choosen based on how many of selected characters are inside them and lenght of the word. 
@@ -25,11 +35,11 @@ Radicals printed below character are separated into two types:
 
 Each character has (AFAIK) only one base radical, but you can also identify it by parts (see http://jisho.org/search/%E6%A0%A1%20%23kanji).
 
-There are three variable that control how the result looks like:
+There are three switches that control how the result looks like:
 
-1. $words_per_character - how many example words print with each character.
-2. $print_radicals - show/hide radicals under characters.
-3. $print_suggested_kanji - count kanji that appear in words (excluding @mykanji and @iknokanji) and print them into STDERR.
+1. -w <number> - how many example words print with each character (default: 12).
+2. -r - show radicals under characters.
+3. -s - count kanji that appear in words (excluding @mykanji and @iknokanji) and print them into STDERR.
 
 ### Why ?
 
