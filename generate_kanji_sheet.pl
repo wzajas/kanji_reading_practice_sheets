@@ -185,7 +185,8 @@ for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji 
    ".join(',', keys %words_seen)."
   ) 
   group by w.id, w.kanji_reading, w.hiragana_reading, w.meaning 
-  order by count(usekanji.id) desc, length asc limit ".$words_per_character);
+  order by count(usekanji.id) desc, length desc, w.character_count desc
+  limit ".$words_per_character);
  $words_query->execute();
 
  my @kanji_words;
