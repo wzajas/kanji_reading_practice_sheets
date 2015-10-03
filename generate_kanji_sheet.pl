@@ -16,7 +16,7 @@ my $dbh = DBI->connect(
 ) or die $DBI::errstr;
 
 my %options;
-getopts("hw:rs", \%options);
+getopts("hw:rsic", \%options);
 
 my $words_per_character=12;
 my $print_radicals=0;
@@ -24,9 +24,11 @@ my $print_suggested_kanji=0;
 
 if($options{h}) {
  print "Usage:
- -w <number> :how many words should be printed with character
+ -c :prefer common words
+ -i :prefer regular kanji usage
  -r :print radicals
- -s :print suggested kanji\n";
+ -s :print suggested kanji
+ -w <number> :how many words should be printed with character\n";
  exit();
 }
 
@@ -45,6 +47,20 @@ if($options{r}) {
 
 if($options{s}) {
  $print_suggested_kanji=1;
+}
+
+my @additional_sort;
+
+if($options{i}) {
+ push(@additional_sort, 'w.irregular asc');
+}
+
+if($options{c}) {
+ push(@additional_sort, 'w.common desc');
+}
+
+if($options{i} || $options{c}) {
+ push(@additional_sort, '');
 }
 
 my @mykanji;
@@ -174,7 +190,7 @@ for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji 
  # Find words which have characters from list and order them by 
  # how many of them are used and by word's length,
  # also filter out words seen in previous characters.
- my $words_query = $dbh->prepare("select w.id, w.kanji_reading, w.hiragana_reading, w.meaning, count(usekanji.id) 
+ my $words_query = $dbh->prepare("select w.id, w.kanji_reading, w.hiragana_reading, w.meaning, count(usekanji.id), max(w.length), max(w.character_count)
   from words w 
   join kanjiwords kw on kw.word_id = w.id 
   join usekanji on usekanji.id = kw.kanji_id 
@@ -184,8 +200,8 @@ for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji 
   ) and w.id not in (
    ".join(',', keys %words_seen)."
   ) 
-  group by w.id, w.kanji_reading, w.hiragana_reading, w.meaning 
-  order by count(usekanji.id) desc, w.character_count desc, length desc
+  group by w.ent_seq
+  order by ".join(", ", @additional_sort)."count(usekanji.id) desc, w.character_count desc, w.length desc
   limit ".$words_per_character);
  $words_query->execute();
 

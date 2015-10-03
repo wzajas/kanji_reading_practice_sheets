@@ -19,9 +19,11 @@ perl generate_kanji_sheet.pl > practice.html
 By default script prints 12 words with each kanji, radicas and suggested characters are hidden.
 
 ```
--w <number> :how many words should be printed with character
+-c :prefer common words
+-i :prefer regular kanji usage
 -r :print radicals
--s :print suggested kanji\n";
+-s :print suggested kanji
+-w <number> :how many words should be printed with character
 ```
 
 ### How it works
@@ -40,6 +42,8 @@ There are three switches that control how the result looks like:
 1. -w <number> - how many example words print with each character (default: 12).
 2. -r - show radicals under characters.
 3. -s - count kanji that appear in words (excluding @mykanji and @iknokanji) and print them into STDERR.
+4. -c - words will be sorted so that common will be first. Beware: some kanji have only few words that are marked as common so always check if result is what you really want.
+5. -i - words will be sorted so that irregular kanji usage will come last.
 
 ### Why ?
 
