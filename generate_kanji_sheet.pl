@@ -131,8 +131,6 @@ print "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">
  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
  <title>Kanji Card</title>
  <style type=\"text/css\">
- div {
- }
  .kanji-title {
    text-align: center;
  }
@@ -142,16 +140,12 @@ print "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">
  .left-panel
  {
      background-color:#ccc;
-     width:20%;
-     float:left;
-  border-bottom: 1px solid black;
+     border-bottom: 1px solid black;
  }
  .right-panel
  {
      background-color:Gray;
-     width:80%;
-     float:left;
-  border-bottom: 1px solid black;
+     border-bottom: 1px solid black;
  }
  .kanji
  {
@@ -162,6 +156,25 @@ print "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">
  .radicals span {
      font-size: 14px;
  }
+ .kun, .on {
+     font-size: 26pt;
+ }
+ a {
+     color: black;
+     text-decoration: none;
+ }
+ ul.character-index {
+     background-color: #ccc;
+     border: 1px solid black;
+ }
+ div.go-up {
+     text-align: right;
+ }
+ div.go-up a {
+     color: black;
+     text-decoration: none;
+     text-align: right;
+ }
  </style>
  </head>
  <body>
@@ -171,6 +184,20 @@ print "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">
 my %words_seen;
 my %suggest_kanji;
 my %used_words;
+my $character_no=0;
+
+#Generate links
+
+print "<a name=\"top\"></a>
+<ul class=\"character-index\">";
+#Remove duplicates!
+for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji }) {
+ print "<li><a href=\"#kanji-".$character_no."\">".$character_no++.". ".$character."</a></li>
+";
+}
+print "</ul><br/>";
+
+$character_no=0;
 
 #Remove duplicates!
 for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji }) {
@@ -213,7 +240,7 @@ for my $character (do { my %seen; grep { !$seen{$_}++ and $kanji{$_} } @mykanji 
 
  print "<div><!-- main div for character -->
  <div class=\"left-panel\">
- <div class=\"kanji\">".$character."</div>
+ <div class=\"kanji\"><a href=\"#kanji-".$character_no."\" name=\"kanji-".$character_no++."\">".$character."</a></div>
  <div class=\"kun\">Kun: <span>".$kanji{$character}{Kun}."</span></div>
  <div class=\"on\">On: <span>".$kanji{$character}{On}."</span></div>";
 
@@ -243,6 +270,8 @@ print "</div><!-- end left-panel -->
 for (@kanji_words) {
  print "<span class=\"word\">".$_."</span><br/>\n";
 }
+
+print "<div class=\"go-up\"><a onclick=\"return confirm('Are you sure?')\" href=\"#top\">Go up</a></div>";
 
 print "</div><!-- end examples -->
 </div><!-- end right-panel -->
