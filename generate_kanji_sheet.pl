@@ -16,11 +16,12 @@ my $dbh = DBI->connect(
 ) or die $DBI::errstr;
 
 my %options;
-getopts("hw:rsic", \%options);
+getopts("hw:rsica", \%options);
 
 my $words_per_character=12;
 my $print_radicals=0;
 my $print_suggested_kanji=0;
+my $dont_attach_txt=0;
 
 if($options{h}) {
  print "Usage:
@@ -28,6 +29,7 @@ if($options{h}) {
  -i :prefer regular kanji usage
  -r :print radicals
  -s :print suggested kanji
+ -a :don't attach i_know_kanji.txt and my_kanji.txt on top of html
  -w <number> :how many words should be printed with character\n";
  exit();
 }
@@ -63,6 +65,10 @@ if($options{i} || $options{c}) {
  push(@additional_sort, '');
 }
 
+if($options{a}) {
+ $dont_attach_txt=1;
+}
+
 my @mykanji;
 
 my @iknowkanji;
@@ -82,7 +88,10 @@ while (my ($kanji_id , $kanji_character , $kanji_reading_on , $kanji_reading_kun
 
 open my $my_kanji_file, '<:encoding(UTF-8)', 'my_kanji.txt' or die "my_kanji.txt not found\n";
 
+print "<!-- my_kanji.txt\n" unless $dont_attach_txt;
+
 while (<$my_kanji_file>){
+ print unless $dont_attach_txt;
  chomp;
  next if /^#/;
  next if /^$/;
@@ -93,10 +102,13 @@ while (<$my_kanji_file>){
 
 close $my_kanji_file;
 
+print "\ni_know_kanji.txt\n" unless $dont_attach_txt;
+
 if ( -f "i_know_kanji.txt" ) {
  open my $i_know_kanji_file, '<:encoding(UTF-8)', 'i_know_kanji.txt' or die "Cannot open i_know_kanji.txt\n";
 
  while (<$i_know_kanji_file>){
+  print unless $dont_attach_txt;
   chomp;
   next if /^#/;
   next if /^$/;
@@ -107,6 +119,8 @@ if ( -f "i_know_kanji.txt" ) {
 
  close $i_know_kanji_file;
 }
+
+print "\n-->\n" unless $dont_attach_txt;
 
 #Merge and delete duplicates
 my (@usekanji) = do { my %seen ; grep { !$seen{$_}++ and $kanji{$_} } (@mykanji, @iknowkanji) };
